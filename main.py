@@ -9,6 +9,7 @@
 from calendar import month
 from datetime import datetime, timedelta
 import pandas as pd #pandas dataframe
+import matplotlib.pyplot as plt
 import requests
 
 #api key
@@ -38,34 +39,72 @@ for i in range(30):
 # List to store dates and rates
 exchangeData = []
 
-# Testing to if API call is successful
-#Current Year, Month and Day
-currYear = datesLastThirtyDays[str(currentDate)]['year']
-currMonth = datesLastThirtyDays[str(currentDate)]['month']
-currDay = datesLastThirtyDays[str(currentDate)]['day']
 
-fullURL = f'{url}{baseCurrency}/{currYear}/{currMonth}/{currDay}'
+# For loop to request API information on the exchange rate for the baseCurrency
+# for the last 30 days in lastThirtyDays dictionary
 
-# API request
-response = requests.get(fullURL)
-data = response.json()
+for dateString, dateInfo in datesLastThirtyDays.items():
+    year = dateInfo['year']
+    month = dateInfo['month']
+    day = dateInfo['day']
 
-print(data)
+    fullURL = f'{url}{baseCurrency}/{year}/{month}/{day}'
 
-# Check if request was successful and if we can access certain fields from the request
-if response.status_code == 200 and "conversion_rates" in data:
-    #pull the specific exchange rate, in our case AUD
-    rate = data['conversion_rates'].get(exchangeCurrency)
-    if rate:
-        # If we can get the rate, append the date and the AUD exchange rate to the list
-        exchangeData.append({'date' : currentDate, 'rate' : rate})
+    # API Request for each specific date
+    response = requests.get(fullURL)
+    data = response.json()
+
+    # Check if request was successful and if we can access certain fields from the request
+    # The API request returns a lot of information, and we only want to access the
+    # 'conversion_rates' information for our exchangeCurrency
+    if response.status_code == 200 and "conversion_rates" in data:
+        #pull the specific exchange rate, in our case AUD
+        rate = data['conversion_rates'].get(exchangeCurrency)
+        if rate:
+            # If we can get the rate, append the date and the AUD exchange rate to the list
+            exchangeData.append({'date' : dateString, 'rate' : rate})
+        else:
+            print('No exchange rates available for ' + dateString)
     else:
-        print('No exchange rates available')
-else:
-    print('Failed to retrieve exchange rates')
+        print('Failed to retrieve exchange rates ' + dateString)
 
 
 # Convert the list of dictionaries to a pandas DataFrame
 df = pd.DataFrame(exchangeData)
 print(df)
+
+# I want to see the max conversion rate for the last 30 days, and the min for the last 30 days
+
+
+# Gets the index, date, and rate for the corresponding max
+maxRateIndex = df['rate'].idxmax()
+maxRateDate = df.loc[maxRateIndex, 'date']
+maxRateValue = df.loc[maxRateIndex, 'rate']
+
+# Gets the index, date, and rate for the corresponding min val of 'rate'
+minRateIndex = df['rate'].idxmin()
+minRateDate = df.loc[minRateIndex, 'date']
+minRateValue = df.loc[minRateIndex, 'rate']
+
+
+print("Max rate:", maxRateValue, "on date:", maxRateDate)
+print("Min rate:", minRateValue, "on date:", minRateDate)
+
+#Plotting the Data
+df.plot(x='date', y='rate')
+
+#plt.axis(())
+#plt.plot(df['Date'], df['Rate'])
+#plt.show()
+plt.scatter(minRateDate, minRateValue, color='blue', marker='o', label='Min Rate', zorder=3)
+plt.scatter(maxRateDate, maxRateValue, color='red', marker='o', label='Max Rate', zorder=3)
+
+plt.xlabel('Date')
+plt.ylabel('Rate')
+
+# Displays all dates with 45-degree rotation for readability
+plt.xticks(df['date'], rotation=45)
+plt.title(f'Exchange Rates between {baseCurrency} and {exchangeCurrency} for last 30 days')
+#plt.plot((minRateDate, minRateValue), (maxRateDate, maxRateValue), marker='o', linestyle='none')
+plt.show()
 
