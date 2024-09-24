@@ -20,7 +20,7 @@ This project uses the ExchangeRate-API for retrieving information, the packages 
 
 3) Insert your API Key into the API_KEY variable in main.py
 4) ```pip install -r requirements.txt ```
-5 )In a terminal, run: ``` python main.py ```
+5) In a terminal, run: ``` python main.py ```
 
 
 ### Dependencies
