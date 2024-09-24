@@ -12,7 +12,7 @@ import pandas as pd #pandas dataframe
 import requests
 
 #api key
-API_KEY = 'ddb26c4e1d440ac62ce77fba'
+API_KEY = ''
 
 #base URL for retrieving currency rate from API
 url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/history/'
