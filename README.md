@@ -18,8 +18,9 @@ This project uses the ExchangeRate-API for retrieving information, the packages 
     * After retrieving your key, please sign up for the Pro Free Trial.
     * It does not require card information and allows for historical data to be requested
 
-3) ```pip install -r requirements.txt ```
-4) In a terminal, run: ``` python main.py ```
+3) Insert your API Key into the API_KEY variable in main.py
+4) ```pip install -r requirements.txt ```
+5 )In a terminal, run: ``` python main.py ```
 
 
 ### Dependencies
