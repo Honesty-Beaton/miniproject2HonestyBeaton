@@ -6,10 +6,10 @@
  exchange rate for the last 30 days (from the current day).
  Showcasing this information as a chart for the last 30 days.
 """
-from calendar import month
 from datetime import datetime, timedelta
 import pandas as pd #pandas dataframe
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import requests
 
 #api key
@@ -73,8 +73,6 @@ for dateString, dateInfo in datesLastThirtyDays.items():
 df = pd.DataFrame(exchangeData)
 print(df)
 
-# I want to see the max conversion rate for the last 30 days, and the min for the last 30 days
-
 
 # Gets the index, date, and rate for the corresponding max
 maxRateIndex = df['rate'].idxmax()
@@ -86,25 +84,36 @@ minRateIndex = df['rate'].idxmin()
 minRateDate = df.loc[minRateIndex, 'date']
 minRateValue = df.loc[minRateIndex, 'rate']
 
+df['date'] = pd.to_datetime(df['date'])
 
-print("Max rate:", maxRateValue, "on date:", maxRateDate)
-print("Min rate:", minRateValue, "on date:", minRateDate)
+ax = df.plot(x='date', y='rate')
 
 #Plotting the Data
-df.plot(x='date', y='rate')
+#.plot(x='date', y='rate')
 
-#plt.axis(())
-#plt.plot(df['Date'], df['Rate'])
-#plt.show()
-plt.scatter(minRateDate, minRateValue, color='blue', marker='o', label='Min Rate', zorder=3)
-plt.scatter(maxRateDate, maxRateValue, color='red', marker='o', label='Max Rate', zorder=3)
+#Plot's the max and min exchange rate as its own data points to highlight them
+plt.scatter(df.loc[maxRateIndex, 'date'], maxRateValue, color='red', marker='o', label='Max Rate', zorder=3)
+plt.scatter(df.loc[minRateIndex, 'date'], minRateValue, color='blue', marker='o', label='Min Rate', zorder=3)
 
+# Labels for x and y axis
 plt.xlabel('Date')
 plt.ylabel('Rate')
 
-# Displays all dates with 45-degree rotation for readability
-plt.xticks(df['date'], rotation=45)
+# Adds slight offset to the y-axis
+minRateOffset = minRateValue - 0.01
+maxRateOffset = maxRateValue + 0.01
+plt.ylim(minRateOffset, maxRateOffset)
+
+
+
+# Displays all dates with 20-degree rotation for readability
+plt.xticks(rotation=45)
+
+# Format x-axis to display date properly
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))  # Format dates as MM-DD
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))  # Show every date (adjust interval if needed)
+
 plt.title(f'Exchange Rates between {baseCurrency} and {exchangeCurrency} for last 30 days')
-#plt.plot((minRateDate, minRateValue), (maxRateDate, maxRateValue), marker='o', linestyle='none')
+plt.legend()
 plt.show()
 
