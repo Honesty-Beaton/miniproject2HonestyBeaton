@@ -7,7 +7,7 @@
 
 ## Description & Overview
 In this project, we are using the [ExchangeRate-API](https://www.exchangerate-api.com/) to get the exchange rate between a base currency and an exchange currency for the last 30 days.
-The base currency is USD, and the exchange currency is AUD
+The base currency is USD, and the exchange currency is AUD.
 I highlight the max and min exchange rates.
 
 This project uses the ExchangeRate-API for retrieving information, the packages pandas and MatPlotLib.
@@ -17,15 +17,16 @@ This project uses the ExchangeRate-API for retrieving information, the packages 
 2) [Get an ExchangeRate-API API Key](https://www.exchangerate-api.com/)
     * After retrieving your key, please sign up for the Pro Free Trial.
     * It does not require card information and allows for historical data to be requested
-3)```pip install -r requirements.txt ```
+
+3) ```pip install -r requirements.txt ```
 4) In a terminal, run: ``` python main.py ```
 
 
 ### Dependencies
-ExchangeRate-API Key
+A Pro ExchangeRate API Key
+[Get an ExchangeRate-API API Key](https://www.exchangerate-api.com/)
 ```
 pip  install -r requirements.txt
-
 ```
 
 ### Executing program
