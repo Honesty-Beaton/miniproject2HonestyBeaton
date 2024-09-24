@@ -4,13 +4,18 @@
 """
  Using the Exchange Rate API and a PANDAS DataFrame to retrieve the
  exchange rate for the last 30 days (from the current day).
- Showcasing this information as a chart for the last 30 days.
+ Showcasing this information as a chart for the last 30 days,
+ highlighting the max and min exchange rates.
 """
 from datetime import datetime, timedelta
 import pandas as pd #pandas dataframe
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import requests
+import os
+
+# Folder to hold the saved chart is created
+os.makedirs("charts/", exist_ok=True)
 
 #api key
 API_KEY = ''
@@ -21,7 +26,6 @@ url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/history/'
 # Base and exchange currencies with baseAmount of $1
 baseCurrency = 'USD'
 exchangeCurrency = 'AUD'
-baseAmount = '1.00'
 
 # Get the current date
 currentDate = datetime.now().date()
@@ -42,8 +46,8 @@ exchangeData = []
 
 # For loop to request API information on the exchange rate for the baseCurrency
 # for the last 30 days in lastThirtyDays dictionary
-
 for dateString, dateInfo in datesLastThirtyDays.items():
+    #Retrieves each year, month and date for API calls
     year = dateInfo['year']
     month = dateInfo['month']
     day = dateInfo['day']
@@ -71,7 +75,6 @@ for dateString, dateInfo in datesLastThirtyDays.items():
 
 # Convert the list of dictionaries to a pandas DataFrame
 df = pd.DataFrame(exchangeData)
-print(df)
 
 
 # Gets the index, date, and rate for the corresponding max
@@ -84,12 +87,11 @@ minRateIndex = df['rate'].idxmin()
 minRateDate = df.loc[minRateIndex, 'date']
 minRateValue = df.loc[minRateIndex, 'rate']
 
+# Converts 'date' to datetime if not already for the x-axix
 df['date'] = pd.to_datetime(df['date'])
 
+# Plotting the data
 ax = df.plot(x='date', y='rate')
-
-#Plotting the Data
-#.plot(x='date', y='rate')
 
 #Plot's the max and min exchange rate as its own data points to highlight them
 plt.scatter(df.loc[maxRateIndex, 'date'], maxRateValue, color='red', marker='o', label='Max Rate', zorder=3)
@@ -105,15 +107,16 @@ maxRateOffset = maxRateValue + 0.01
 plt.ylim(minRateOffset, maxRateOffset)
 
 
-
 # Displays all dates with 20-degree rotation for readability
 plt.xticks(rotation=45)
 
 # Format x-axis to display date properly
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))  # Format dates as MM-DD
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))  # Show every date (adjust interval if needed)
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))  # Show every date
 
 plt.title(f'Exchange Rates between {baseCurrency} and {exchangeCurrency} for last 30 days')
 plt.legend()
-plt.show()
+
+plt.savefig(f'charts/{baseCurrency}-{exchangeCurrency}.png')
+print(f'New chart {baseCurrency}-{exchangeCurrency}.png for the last 30 days has been saved in the charts folder.')
 
