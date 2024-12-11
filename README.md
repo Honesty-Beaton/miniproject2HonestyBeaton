@@ -16,6 +16,8 @@ This project uses the ExchangeRate-API for retrieving information, the packages 
 1) Clone this project
 2) [Get an ExchangeRate-API API Key](https://www.exchangerate-api.com/)
     * After retrieving your key, please sign up for the Pro Free Trial.
+    * This can be done when creating your account, or 
+    * after creating your account, go to Manage Plan and change to the Pro Free Trial
     * It does not require card information and allows for historical data to be requested
 
 3) Insert your API Key into the API_KEY variable in main.py
