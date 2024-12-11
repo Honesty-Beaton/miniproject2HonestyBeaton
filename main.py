@@ -18,7 +18,7 @@ import os
 os.makedirs("charts/", exist_ok=True)
 
 #api key
-API_KEY = ''
+API_KEY = '947efbb7b85e204b091d8d4f'
 
 #base URL for retrieving currency rate from API
 url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/history/'
